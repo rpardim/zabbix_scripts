@@ -32,7 +32,7 @@ if {[regexp {Configuration last saved at ([^\r\n]+)} $output -> saveddate]} {
     regsub {\s+ART\s+} $saveddate " " saveddate
 
     set epoch [clock scan $saveddate]
-    puts [clock format $epoch -format "%Y%m%d%H"]
+    puts [clock format $epoch -format "%Y%m%d%H%M%S"]
 } else {
     puts "Unknown"
 }
