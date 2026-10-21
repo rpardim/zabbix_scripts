@@ -1,0 +1,89 @@
+zabbix_export:
+  version: '6.0'
+  date: '2026-10-21T23:37:21Z'
+  groups:
+    - uuid: 0957b5d9d6304a5dac8441c02f2c4822
+      name: 'Load Balance'
+  templates:
+    - uuid: a263256e84ec49b280416f7190e6d0c7
+      template: A10_ZABBIX_STATE
+      name: A10_ZABBIX_STATE
+      groups:
+        - name: 'Load Balance'
+      items:
+        - uuid: 76dcbe0e30874ea9b7923143645bee9c
+          name: 'Config Last Time'
+          type: EXTERNAL
+          key: 'a10_configlast_time.sh[{HOST.CONN}]'
+          delay: 1h
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'High Availability'
+        - uuid: 45561a641fd545788b9d6892cc9347a8
+          name: 'Config Time'
+          type: EXTERNAL
+          key: 'a10_config_time.sh[{HOST.CONN}]'
+          delay: 1h
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'High Availability'
+          triggers:
+            - uuid: af7cc4257dfb49ceada8229d010a5a4f
+              expression: '(last(/A10_ZABBIX_STATE/a10_config_time.sh[{HOST.CONN}],#1)<>last(/A10_ZABBIX_STATE/a10_config_time.sh[{HOST.CONN}],#2))=1'
+              name: 'Config has been changed'
+              manual_close: 'YES'
+        - uuid: 3fd0f545b3974b9399e4615ad9e8fc91
+          name: 'Config Saved Time'
+          type: EXTERNAL
+          key: 'a10_saved_time.sh[{HOST.CONN}]'
+          delay: 2h
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'High Availability'
+        - uuid: 166f97a3f16143ccbc2d618bf4063513
+          name: 'Config Sync Time'
+          type: EXTERNAL
+          key: 'a10_synced_time.sh[{HOST.CONN}]'
+          delay: 12h
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'High Availability'
+        - uuid: b37ab4bd45544792b3662be31ab5df16
+          name: 'VRRP State'
+          type: EXTERNAL
+          key: 'a10_vrrpa_state.sh[{HOST.CONN}]'
+          delay: 15m
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'High Availability'
+          triggers:
+            - uuid: 01cdd4e4f999406e9901f091b64375fe
+              expression: 'find(/A10_ZABBIX_STATE/a10_vrrpa_state.sh[{HOST.CONN}],,"like","Active")=0 and find(/A10_ZABBIX_STATE/a10_vrrpa_state.sh[{HOST.CONN}],,"like","Standby")=0'
+              name: 'VRRP Active/Standby state has been changed'
+              manual_close: 'YES'
+            - uuid: ef947405200c40e7865be78df0bd915d
+              expression: '(last(/A10_ZABBIX_STATE/a10_vrrpa_state.sh[{HOST.CONN}],#1)<>last(/A10_ZABBIX_STATE/a10_vrrpa_state.sh[{HOST.CONN}],#2))=1'
+              name: 'VRRP State Change'
+              manual_close: 'YES'
+      tags:
+        - tag: class
+          value: network
+  triggers:
+    - uuid: 4aa4dd1766f84a1a9fe132679c63b363
+      expression: 'last(/A10_ZABBIX_STATE/a10_configlast_time.sh[{HOST.CONN}])>last(/A10_ZABBIX_STATE/a10_saved_time.sh[{HOST.CONN}])'
+      name: 'Config has been changed and is not saved'
+      manual_close: 'YES'
+    - uuid: 9ec59b82d1624bed834ec92bb3356e37
+      expression: 'last(/A10_ZABBIX_STATE/a10_configlast_time.sh[{HOST.CONN}])>last(/A10_ZABBIX_STATE/a10_synced_time.sh[{HOST.CONN}])'
+      name: 'Config has been changed and is not synchronized'
+      manual_close: 'YES'
