@@ -32,7 +32,7 @@ if {[regexp {Configuration last synchronized at ([^\r\n]+)} $output -> syncdate]
     regsub {\s+ART\s+} $syncdate " " syncdate
 
     set epoch [clock scan $syncdate]
-    puts [clock format $epoch -format "%Y%m%d%H"]
+    puts [clock format $epoch -format "%Y%m%d%H%M%S"]
 } else {
     puts "Unknown"
 }
