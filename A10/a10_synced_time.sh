@@ -29,7 +29,7 @@ expect "#"
 set output $expect_out(buffer)
 
 if {[regexp {Configuration last synchronized at ([^\r\n]+)} $output -> syncdate]} {
-    regsub {\s+ART\s+} $syncdate " " syncdate
+    regsub {\s+[A-Z]{3,4}\s+} $syncdate " " syncdate
 
     set epoch [clock scan $syncdate]
     puts [clock format $epoch -format "%Y%m%d%H%M%S"]
