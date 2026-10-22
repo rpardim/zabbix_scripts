@@ -1,5 +1,6 @@
 ## Script para monitoração de Load Balancer A10 com External Check
 ### Versão ACOS 2.6.1
+### Versão ACOS 2.7.2
 ### Versão Zabbix 6.0.47
 ##
 #### VRRP State
